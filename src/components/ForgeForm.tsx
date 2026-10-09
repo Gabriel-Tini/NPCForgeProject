@@ -1,5 +1,6 @@
 import React from "react";
 import type { ForgeFormData } from "../types/npc";
+import { Dices, Sparkles, Hammer } from "lucide-react";
 
 interface ForgeFormProps {
   formData: ForgeFormData;
@@ -77,9 +78,9 @@ export const ForgeForm: React.FC<ForgeFormProps> = ({ formData, onChange, onSubm
       {/* Header */}
       <div className="text-center mb-6">
         <h2 className="font-['Cinzel',serif] text-xl font-bold tracking-wider text-[#f5dfa2] flex items-center justify-center gap-2">
-          <span className="text-[#d4af37] text-sm">?</span>
+          <Sparkles className="w-4 h-4 text-[#d4af37]" />
           Forge Your NPC
-          <span className="text-[#d4af37] text-sm">?</span>
+          <Sparkles className="w-4 h-4 text-[#d4af37]" />
         </h2>
         <p className="text-xs text-slate-400 mt-1">
           Select parameters or roll destiny to create a character
@@ -178,7 +179,7 @@ export const ForgeForm: React.FC<ForgeFormProps> = ({ formData, onChange, onSubm
               <span className="font-['Cinzel',serif] text-[#fceec7] font-bold tracking-widest text-base">
                 {isLoading ? "FORGING CHARACTER..." : "FORGE NPC"}
               </span>
-              <span className="text-lg text-[#ffd700]">?</span>
+              <Hammer className="w-5 h-5 text-[#ffd700]" />
             </div>
           </button>
 
@@ -189,7 +190,7 @@ export const ForgeForm: React.FC<ForgeFormProps> = ({ formData, onChange, onSubm
             disabled={isLoading}
             className="w-full py-2.5 rounded-lg border border-[#c5a059]/40 bg-[#161a25] hover:bg-[#1f2636] hover:border-[#c5a059]/70 text-[#f5dfa2] text-xs font-semibold tracking-wider uppercase transition-all flex items-center justify-center space-x-2"
           >
-            <span>??</span>
+            <Dices className="w-4 h-4 text-[#ffd700]" />
             <span>Roll Random Destiny</span>
           </button>
         </div>

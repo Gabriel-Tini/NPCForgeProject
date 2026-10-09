@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Settings, X } from "lucide-react";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -33,11 +34,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
       <div className="bg-[#121620] border-2 border-[#c5a059]/60 rounded-xl max-w-md w-full p-6 shadow-2xl relative">
         <div className="flex items-center justify-between border-b border-[#2a241b] pb-3.5 mb-4">
-          <h3 className="font-['Cinzel',serif] text-lg font-bold text-[#f5dfa2]">
-            ? Forge Settings
-          </h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-white font-bold">
-            ?
+          <div className="flex items-center space-x-2">
+            <Settings className="w-5 h-5 text-[#d4af37]" />
+            <h3 className="font-['Cinzel',serif] text-lg font-bold text-[#f5dfa2]">
+              Forge Settings
+            </h3>
+          </div>
+          <button onClick={onClose} className="text-slate-400 hover:text-white p-1">
+            <X className="w-5 h-5" />
           </button>
         </div>
 

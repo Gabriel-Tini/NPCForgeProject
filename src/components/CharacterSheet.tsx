@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import type { NPC } from "../types/npc";
+import { Star, Copy, Check, ThumbsUp, ThumbsDown, Key, Scroll } from "lucide-react";
 
 interface CharacterSheetProps {
   npc: NPC;
@@ -16,30 +17,30 @@ export const CharacterSheet: React.FC<CharacterSheetProps> = ({
 
   const handleCopy = () => {
     const text = `
-?? ${npc.name} � ${npc.title}
+⚔️ ${npc.name} — ${npc.title}
 Race: ${npc.race} | Class: ${npc.characterClass} | Age: ${npc.age}
 Setting: ${npc.setting} | Tone: ${npc.tone}
 
-?? APPEARANCE:
+📜 APPEARANCE:
 ${npc.appearance}
 
-?? PERSONALITY:
-${npc.personalityTraits.map((t) => `� ${t}`).join("\n")}
+🧠 PERSONALITY:
+${npc.personalityTraits.map((t) => `• ${t}`).join("\n")}
 
-?? BACKSTORY:
+📖 BACKSTORY:
 ${npc.backstory}
 
-??? SECRET:
+🗝️ SECRET:
 ${npc.secret}
 
-?? DIALOGUE:
+💬 DIALOGUE:
 ${npc.dialogueQuotes.map((q) => `"${q}"`).join("\n")}
 
-?? ATTRIBUTES:
+🎲 ATTRIBUTES:
 STR: ${npc.attributes.strength} | DEX: ${npc.attributes.dexterity} | CON: ${npc.attributes.constitution}
 INT: ${npc.attributes.intelligence} | WIS: ${npc.attributes.wisdom} | CHA: ${npc.attributes.charisma}
 
-?? QUEST: ${npc.quest.title} [${npc.quest.difficulty}]
+📜 QUEST: ${npc.quest.title} [${npc.quest.difficulty}]
 ${npc.quest.description}
 Reward: ${npc.quest.reward}
 `.trim();
@@ -80,49 +81,59 @@ Reward: ${npc.quest.reward}
           {/* Favorite button */}
           <button
             onClick={() => onToggleFavorite(npc)}
-            className={`p-2 rounded-lg border transition-all text-sm ${
+            className={`p-2 rounded-lg border transition-all text-sm flex items-center justify-center ${
               npc.isFavorite
                 ? "bg-amber-500/20 border-[#d4af37] text-[#ffd700] shadow-[0_0_12px_rgba(212,175,55,0.4)]"
                 : "bg-[#181d2a] border-slate-700/80 text-slate-400 hover:text-[#d4af37] hover:border-[#c5a059]/60"
             }`}
             title={npc.isFavorite ? "Remove from Favorites" : "Add to Favorites"}
           >
-            ?
+            <Star className={`w-4 h-4 ${npc.isFavorite ? "fill-[#ffd700] text-[#ffd700]" : ""}`} />
           </button>
 
           {/* Copy button */}
           <button
             onClick={handleCopy}
-            className="p-2 rounded-lg border border-slate-700/80 bg-[#181d2a] text-slate-400 hover:text-slate-200 hover:border-slate-500 transition-all text-sm"
+            className="px-2.5 py-1.5 rounded-lg border border-slate-700/80 bg-[#181d2a] text-slate-300 hover:text-white hover:border-slate-500 transition-all text-xs flex items-center gap-1.5"
             title="Copy Character Sheet"
           >
-            {copied ? "? Copied" : "?? Copy"}
+            {copied ? (
+              <>
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="text-emerald-400 font-medium">Copied</span>
+              </>
+            ) : (
+              <>
+                <Copy className="w-3.5 h-3.5 text-slate-400" />
+                <span>Copy</span>
+              </>
+            )}
           </button>
 
           {/* Feedback thumbs up */}
           <button
             onClick={() => onFeedback(npc.id, "like")}
-            className={`p-2 rounded-lg border transition-all text-sm ${
+            className={`p-2 rounded-lg border transition-all text-sm flex items-center justify-center ${
               npc.feedback === "like"
-                ? "bg-emerald-900/40 border-emerald-500 text-emerald-300"
+                ? "bg-emerald-900/40 border-emerald-500 text-emerald-300 shadow-[0_0_8px_rgba(16,185,129,0.3)]"
                 : "bg-[#181d2a] border-slate-700/80 text-slate-400 hover:text-emerald-400 hover:border-emerald-600/50"
             }`}
             title="Like this NPC"
           >
-            ??
+            <ThumbsUp className={`w-4 h-4 ${npc.feedback === "like" ? "fill-emerald-400/40" : ""}`} />
           </button>
 
           {/* Feedback thumbs down */}
           <button
             onClick={() => onFeedback(npc.id, "dislike")}
-            className={`p-2 rounded-lg border transition-all text-sm ${
+            className={`p-2 rounded-lg border transition-all text-sm flex items-center justify-center ${
               npc.feedback === "dislike"
-                ? "bg-rose-900/40 border-rose-500 text-rose-300"
+                ? "bg-rose-900/40 border-rose-500 text-rose-300 shadow-[0_0_8px_rgba(244,63,94,0.3)]"
                 : "bg-[#181d2a] border-slate-700/80 text-slate-400 hover:text-rose-400 hover:border-rose-600/50"
             }`}
             title="Dislike this NPC"
           >
-            ??
+            <ThumbsDown className={`w-4 h-4 ${npc.feedback === "dislike" ? "fill-rose-400/40" : ""}`} />
           </button>
         </div>
       </div>
@@ -181,7 +192,7 @@ Reward: ${npc.quest.reward}
         {/* Secret Callout */}
         <div className="p-3.5 rounded-lg bg-gradient-to-r from-[#241c0f] to-[#181a24] border border-[#d4af37]/60 shadow-[0_0_15px_rgba(212,175,55,0.15)]">
           <div className="flex items-start space-x-2.5">
-            <span className="text-base text-[#ffd700]">???</span>
+            <Key className="w-5 h-5 text-[#ffd700] shrink-0 mt-0.5" />
             <div>
               <span className="font-['Cinzel',serif] font-bold text-xs uppercase tracking-wider text-[#f5dfa2] block mb-0.5">
                 Secret (Game Master Hook)
@@ -237,7 +248,7 @@ Reward: ${npc.quest.reward}
           <div className="bg-gradient-to-b from-[#221c13] to-[#171618] border-2 border-[#c5a059]/70 rounded-xl p-4 sm:p-5 relative shadow-[0_5px_20px_rgba(0,0,0,0.5)]">
             <div className="flex items-center justify-between mb-2">
               <span className="font-['Cinzel',serif] text-xs font-black uppercase tracking-widest text-[#d4af37] flex items-center gap-1.5">
-                <span>??</span> ASSOCIATED QUEST
+                <Scroll className="w-3.5 h-3.5" /> ASSOCIATED QUEST
               </span>
               <span
                 className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded border ${
