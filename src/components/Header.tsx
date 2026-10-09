@@ -1,5 +1,6 @@
 import React from "react";
-import { Star, Github, Settings } from "lucide-react";
+import { Star, Settings } from "lucide-react";
+import { GitBranch } from "lucide-react" from "lucide-react";
 
 interface HeaderProps {
   savedCount: number;
@@ -58,7 +59,7 @@ export const Header: React.FC<HeaderProps> = ({ savedCount, onOpenSaved, onOpenS
             className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-md border border-slate-700/60 bg-[#141822] hover:bg-[#1c2230] hover:border-slate-500 text-slate-300 transition-all text-xs sm:text-sm"
             title="View on GitHub"
           >
-            <Github className="w-4 h-4" />
+            <GitBranch className="w-4 h-4" />
             <span>GitHub</span>
           </a>
 
