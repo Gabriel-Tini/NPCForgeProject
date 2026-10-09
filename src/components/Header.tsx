@@ -1,6 +1,5 @@
 import React from "react";
-import { Star, Settings } from "lucide-react";
-import { GitBranch } from "lucide-react" from "lucide-react";
+import { Star, Settings, GitBranch } from "lucide-react";
 
 interface HeaderProps {
   savedCount: number;
