@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import type { ForgeFormData, NPC } from "./types/npc";
+import type { Language } from "./lib/i18n";
+import { translations } from "./lib/i18n";
 import { generateNPCWithAI } from "./lib/gemini";
 import { Header } from "./components/Header";
 import { ForgeForm } from "./components/ForgeForm";
@@ -9,18 +11,43 @@ import { FavoritesModal } from "./components/FavoritesModal";
 import { SettingsModal } from "./components/SettingsModal";
 
 export const App: React.FC = () => {
-  const [formData, setFormData] = useState<ForgeFormData>({
-    setting: "High Fantasy (Epic Kingdoms & Elves)",
-    role: "Mysterious Merchant & Relic Peddler",
-    tone: "Dark & Gritty",
-    extraDetail: ""
+  // Determine initial language
+  const [language, setLanguage] = useState<Language>(() => {
+    const saved = localStorage.getItem("npc_forge_lang") as Language;
+    if (saved === "en" || saved === "pt-BR") return saved;
+    return navigator.language.startsWith("pt") ? "pt-BR" : "en";
   });
+
+  const t = translations[language];
+
+  const [formData, setFormData] = useState<ForgeFormData>(() => ({
+    setting: t.settingsList[0],
+    role: t.rolesList[0],
+    tone: t.tonesList[0],
+    extraDetail: ""
+  }));
 
   const [activeNPC, setActiveNPC] = useState<NPC | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [favorites, setFavorites] = useState<NPC[]>([]);
   const [isSavedOpen, setIsSavedOpen] = useState<boolean>(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+
+  // Toggle Language
+  const handleToggleLanguage = () => {
+    const nextLang: Language = language === "en" ? "pt-BR" : "en";
+    setLanguage(nextLang);
+    localStorage.setItem("npc_forge_lang", nextLang);
+
+    // Update default form inputs to match new language
+    const nextT = translations[nextLang];
+    setFormData((prev) => ({
+      ...prev,
+      setting: nextT.settingsList[0],
+      role: nextT.rolesList[0],
+      tone: nextT.tonesList[0]
+    }));
+  };
 
   // Load favorites from localStorage
   useEffect(() => {
@@ -48,8 +75,7 @@ export const App: React.FC = () => {
   const handleForge = async (data: ForgeFormData) => {
     setIsLoading(true);
     try {
-      const forged = await generateNPCWithAI(data);
-      // Check if already in favorites
+      const forged = await generateNPCWithAI(data, language);
       const isFav = favorites.some((f) => f.id === forged.id);
       setActiveNPC({ ...forged, isFavorite: isFav });
     } catch (err) {
@@ -102,6 +128,8 @@ export const App: React.FC = () => {
       {/* Header */}
       <Header
         savedCount={favorites.length}
+        language={language}
+        onToggleLanguage={handleToggleLanguage}
         onOpenSaved={() => setIsSavedOpen(true)}
         onOpenSettings={() => setIsSettingsOpen(true)}
       />
@@ -113,6 +141,7 @@ export const App: React.FC = () => {
           <div className="lg:col-span-5 sticky top-24">
             <ForgeForm
               formData={formData}
+              language={language}
               onChange={setFormData}
               onSubmit={handleForge}
               isLoading={isLoading}
@@ -122,10 +151,11 @@ export const App: React.FC = () => {
           {/* Right Column: Character Sheet (7 cols on lg) */}
           <div className="lg:col-span-7">
             {isLoading ? (
-              <AnvilLoader />
+              <AnvilLoader language={language} />
             ) : activeNPC ? (
               <CharacterSheet
                 npc={activeNPC}
+                language={language}
                 onToggleFavorite={handleToggleFavorite}
                 onFeedback={handleFeedback}
               />
@@ -133,19 +163,19 @@ export const App: React.FC = () => {
               /* Empty state / Welcome card */
               <div className="bg-[#121620]/90 backdrop-blur-md border border-[#c5a059]/30 rounded-xl p-8 sm:p-12 text-center shadow-[0_10px_35px_rgba(0,0,0,0.6)] min-h-[480px] flex flex-col items-center justify-center relative overflow-hidden">
                 <div className="w-20 h-20 rounded-full bg-[#181d2a] border border-[#c5a059]/40 flex items-center justify-center mb-5 shadow-[0_0_20px_rgba(197,160,89,0.15)]">
-                  <span className="text-3xl text-[#d4af37]">?</span>
+                  <span className="text-3xl text-[#d4af37]">⚒</span>
                 </div>
                 <h3 className="font-['Cinzel',serif] text-xl font-bold tracking-wider text-[#f5dfa2] mb-2">
-                  THE FORGE AWAITS YOUR COMMAND
+                  {t.emptyTitle}
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-400 max-w-md leading-relaxed mb-6">
-                  Select your world setting, archetype, and narrative tone on the left, then strike the anvil to forge a living legend with Google Gemini.
+                  {t.emptySubtitle}
                 </p>
                 <button
                   onClick={() => handleForge(formData)}
                   className="px-6 py-2.5 rounded-lg border border-[#c5a059]/50 bg-gradient-to-r from-[#2a2012] via-[#3a2c16] to-[#2a2012] hover:border-[#ffd700] text-[#fceec7] font-['Cinzel',serif] text-xs font-bold tracking-widest uppercase transition-all shadow-lg hover:shadow-[0_0_20px_rgba(212,175,55,0.3)]"
                 >
-                  Strike the Anvil Now ?
+                  {t.emptyButton}
                 </button>
               </div>
             )}
@@ -156,7 +186,7 @@ export const App: React.FC = () => {
       {/* Footer */}
       <footer className="border-t border-[#1f1a14] py-6 px-4 text-center text-xs text-slate-500 z-10 bg-[#0d1017]/80">
         <p className="font-medium text-slate-400">
-          NPC Forge � Built by{" "}
+          NPC Forge • {language === "pt-BR" ? "Desenvolvido por" : "Built by"}{" "}
           <a
             href="https://github.com/Gabriel-Tini"
             target="_blank"
@@ -165,16 +195,17 @@ export const App: React.FC = () => {
           >
             Gabriel-Tini
           </a>{" "}
-          with Antigravity, React, TypeScript & Google Gemini
+          {language === "pt-BR" ? "com Antigravity, React, TypeScript e Google Gemini" : "with Antigravity, React, TypeScript & Google Gemini"}
         </p>
         <p className="text-[11px] text-slate-600 mt-1">
-          Published on Firebase Hosting � Free & Open Source
+          {language === "pt-BR" ? "Publicado no Firebase Hosting • Código Aberto e Gratuito" : "Published on Firebase Hosting • Free & Open Source"}
         </p>
       </footer>
 
       {/* Modals */}
       <FavoritesModal
         isOpen={isSavedOpen}
+        language={language}
         onClose={() => setIsSavedOpen(false)}
         favorites={favorites}
         onSelect={(npc) => setActiveNPC(npc)}
@@ -183,6 +214,7 @@ export const App: React.FC = () => {
 
       <SettingsModal
         isOpen={isSettingsOpen}
+        language={language}
         onClose={() => setIsSettingsOpen(false)}
       />
     </div>

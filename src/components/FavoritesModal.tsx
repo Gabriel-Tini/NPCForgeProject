@@ -1,9 +1,12 @@
 import React from "react";
 import type { NPC } from "../types/npc";
+import type { Language } from "../lib/i18n";
+import { translations } from "../lib/i18n";
 import { Star, Download, Trash2, X } from "lucide-react";
 
 interface FavoritesModalProps {
   isOpen: boolean;
+  language: Language;
   onClose: () => void;
   favorites: NPC[];
   onSelect: (npc: NPC) => void;
@@ -12,12 +15,14 @@ interface FavoritesModalProps {
 
 export const FavoritesModal: React.FC<FavoritesModalProps> = ({
   isOpen,
+  language,
   onClose,
   favorites,
   onSelect,
   onDelete
 }) => {
   if (!isOpen) return null;
+  const t = translations[language];
 
   const exportAllJSON = () => {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(favorites, null, 2));
@@ -37,7 +42,7 @@ export const FavoritesModal: React.FC<FavoritesModalProps> = ({
           <div className="flex items-center space-x-2">
             <Star className="w-5 h-5 text-[#d4af37] fill-[#d4af37]" />
             <h3 className="font-['Cinzel',serif] text-lg font-bold text-[#f5dfa2]">
-              Saved Characters ({favorites.length})
+              {t.savedCharacters} ({favorites.length})
             </h3>
           </div>
           <button
@@ -52,9 +57,9 @@ export const FavoritesModal: React.FC<FavoritesModalProps> = ({
         <div className="flex-1 overflow-y-auto space-y-3 pr-1">
           {favorites.length === 0 ? (
             <div className="text-center py-12 text-slate-400">
-              <p className="text-sm">No saved characters yet.</p>
+              <p className="text-sm">{t.noSavedYet}</p>
               <p className="text-xs text-slate-500 mt-1">
-                Click the star on any forged NPC to save them here!
+                {t.noSavedTip}
               </p>
             </div>
           ) : (
@@ -87,7 +92,7 @@ export const FavoritesModal: React.FC<FavoritesModalProps> = ({
                     }}
                     className="px-2.5 py-1 text-xs rounded bg-[#201d14] border border-[#c5a059]/40 text-[#f5dfa2] hover:bg-[#302818] transition-colors"
                   >
-                    View
+                    {t.view}
                   </button>
                   <button
                     onClick={() => onDelete(npc.id)}
@@ -109,13 +114,13 @@ export const FavoritesModal: React.FC<FavoritesModalProps> = ({
               onClick={exportAllJSON}
               className="text-xs text-[#f5dfa2] hover:underline flex items-center gap-1.5"
             >
-              <Download className="w-3.5 h-3.5" /> Export all as JSON
+              <Download className="w-3.5 h-3.5" /> {t.exportJson}
             </button>
             <button
               onClick={onClose}
               className="px-4 py-1.5 rounded-lg bg-[#181d2a] hover:bg-[#202738] text-xs font-semibold text-slate-200 transition-colors"
             >
-              Close
+              {t.close}
             </button>
           </div>
         )}

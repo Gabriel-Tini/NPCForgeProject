@@ -1,13 +1,25 @@
 import React from "react";
-import { Star, Settings, GitBranch } from "lucide-react";
+import { Star, Settings, GitBranch, Globe } from "lucide-react";
+import type { Language } from "../lib/i18n";
+import { translations } from "../lib/i18n";
 
 interface HeaderProps {
   savedCount: number;
+  language: Language;
+  onToggleLanguage: () => void;
   onOpenSaved: () => void;
   onOpenSettings: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ savedCount, onOpenSaved, onOpenSettings }) => {
+export const Header: React.FC<HeaderProps> = ({
+  savedCount,
+  language,
+  onToggleLanguage,
+  onOpenSaved,
+  onOpenSettings
+}) => {
+  const t = translations[language];
+
   return (
     <header className="border-b border-[#2a241b] bg-[#0d1017]/90 backdrop-blur-md sticky top-0 z-40 px-4 sm:px-8 py-3.5 shadow-2xl">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -30,21 +42,31 @@ export const Header: React.FC<HeaderProps> = ({ savedCount, onOpenSaved, onOpenS
               NPC FORGE
             </h1>
             <p className="text-xs text-slate-400 font-medium tracking-wide">
-              Forge legendary characters with AI
+              {t.tagline}
             </p>
           </div>
         </div>
 
         {/* Action icons */}
         <div className="flex items-center space-x-2 sm:space-x-3">
+          {/* Language toggle */}
+          <button
+            onClick={onToggleLanguage}
+            className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-md border border-[#c5a059]/40 bg-[#161a24] hover:bg-[#1f2636] hover:border-[#ffd700] text-[#f5dfa2] transition-all text-xs font-semibold shadow-md"
+            title={language === "en" ? "Mudar para Português (BR)" : "Switch to English"}
+          >
+            <Globe className="w-3.5 h-3.5 text-[#d4af37]" />
+            <span className="tracking-wider">{language === "en" ? "EN" : "PT-BR"}</span>
+          </button>
+
           {/* Saved NPCs Button */}
           <button
             onClick={onOpenSaved}
             className="flex items-center space-x-2 px-3 py-1.5 rounded-md border border-[#c5a059]/30 bg-[#161a24] hover:bg-[#1d2331] hover:border-[#c5a059]/60 text-slate-200 transition-all text-xs sm:text-sm font-medium shadow-md"
-            title="View Saved NPCs"
+            title={t.savedNpcs}
           >
             <Star className="w-3.5 h-3.5 text-[#d4af37] fill-[#d4af37]" />
-            <span>Saved NPCs</span>
+            <span className="hidden sm:inline">{t.savedNpcs}</span>
             <span className="px-1.5 py-0.2 text-[11px] rounded-full bg-[#c5a059]/20 text-[#f5dfa2] font-semibold border border-[#c5a059]/30">
               {savedCount}
             </span>
@@ -55,7 +77,7 @@ export const Header: React.FC<HeaderProps> = ({ savedCount, onOpenSaved, onOpenS
             href="https://github.com/Gabriel-Tini/NPCForgeProject"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-md border border-slate-700/60 bg-[#141822] hover:bg-[#1c2230] hover:border-slate-500 text-slate-300 transition-all text-xs sm:text-sm"
+            className="hidden md:flex items-center space-x-1.5 px-3 py-1.5 rounded-md border border-slate-700/60 bg-[#141822] hover:bg-[#1c2230] hover:border-slate-500 text-slate-300 transition-all text-xs sm:text-sm"
             title="View on GitHub"
           >
             <GitBranch className="w-4 h-4" />
@@ -66,7 +88,7 @@ export const Header: React.FC<HeaderProps> = ({ savedCount, onOpenSaved, onOpenS
           <button
             onClick={onOpenSettings}
             className="p-1.5 rounded-md border border-slate-700/60 bg-[#141822] hover:bg-[#1c2230] hover:border-[#c5a059]/40 text-slate-400 hover:text-[#f5dfa2] transition-all"
-            title="Settings / API Key"
+            title={t.settings}
           >
             <Settings className="w-4 h-4" />
           </button>

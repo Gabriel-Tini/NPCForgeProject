@@ -1,61 +1,35 @@
 import React from "react";
 import type { ForgeFormData } from "../types/npc";
+import type { Language } from "../lib/i18n";
+import { translations } from "../lib/i18n";
 import { Dices, Sparkles, Hammer } from "lucide-react";
 
 interface ForgeFormProps {
   formData: ForgeFormData;
+  language: Language;
   onChange: (data: ForgeFormData) => void;
   onSubmit: (data: ForgeFormData) => void;
   isLoading: boolean;
 }
 
-const SETTINGS = [
-  "High Fantasy (Epic Kingdoms & Elves)",
-  "Dark Fantasy (Grim, Corrupt & Deadly)",
-  "Cyberpunk (Neon, Megacorps & Chrome)",
-  "Cosmic Horror (Lovecraftian & Eldritch)",
-  "Steampunk & Victorian Arcana",
-  "Post-Apocalyptic Wasteland",
-  "Feudal Myth & Wandering Ronin",
-  "Space Opera & Galactic Outlaws"
-];
+export const ForgeForm: React.FC<ForgeFormProps> = ({
+  formData,
+  language,
+  onChange,
+  onSubmit,
+  isLoading
+}) => {
+  const t = translations[language];
 
-const ROLES = [
-  "Mysterious Merchant & Relic Peddler",
-  "Exiled Knight / Disgraced Paladin",
-  "Cynical Rogue / Guild Assassin",
-  "Ancient Mage / Cryptic Scholar",
-  "Tavern Keeper & Secret Informant",
-  "Ruthless Bounty Hunter",
-  "Apothecary / Hedge Witch",
-  "Traveling Bard / Spymaster"
-];
-
-const TONES = [
-  "Dark & Gritty",
-  "Epic & Heroic",
-  "Mysterious & Cryptic",
-  "Melancholic & Tragic",
-  "Humorous & Eccentric"
-];
-
-export const ForgeForm: React.FC<ForgeFormProps> = ({ formData, onChange, onSubmit, isLoading }) => {
   const handleChange = (field: keyof ForgeFormData, val: string) => {
     onChange({ ...formData, [field]: val });
   };
 
   const handleRandomize = () => {
-    const randomSetting = SETTINGS[Math.floor(Math.random() * SETTINGS.length)];
-    const randomRole = ROLES[Math.floor(Math.random() * ROLES.length)];
-    const randomTone = TONES[Math.floor(Math.random() * TONES.length)];
-    const sampleQuirks = [
-      "Missing left ring finger, bound by a blood contract",
-      "Refuses to accept standard coinage, only barters for memories or teeth",
-      "Followed by three silent white owls wherever they travel",
-      "Carries a shattered blade that whispers warnings in the dark",
-      "Possesses an hourglass running with black sand that never empties"
-    ];
-    const randomQuirk = sampleQuirks[Math.floor(Math.random() * sampleQuirks.length)];
+    const randomSetting = t.settingsList[Math.floor(Math.random() * t.settingsList.length)];
+    const randomRole = t.rolesList[Math.floor(Math.random() * t.rolesList.length)];
+    const randomTone = t.tonesList[Math.floor(Math.random() * t.tonesList.length)];
+    const randomQuirk = t.quirksList[Math.floor(Math.random() * t.quirksList.length)];
 
     const randomized: ForgeFormData = {
       setting: randomSetting,
@@ -79,11 +53,11 @@ export const ForgeForm: React.FC<ForgeFormProps> = ({ formData, onChange, onSubm
       <div className="text-center mb-6">
         <h2 className="font-['Cinzel',serif] text-xl font-bold tracking-wider text-[#f5dfa2] flex items-center justify-center gap-2">
           <Sparkles className="w-4 h-4 text-[#d4af37]" />
-          Forge Your NPC
+          {t.forgeTitle}
           <Sparkles className="w-4 h-4 text-[#d4af37]" />
         </h2>
         <p className="text-xs text-slate-400 mt-1">
-          Select parameters or roll destiny to create a character
+          {t.forgeSubtitle}
         </p>
       </div>
 
@@ -97,7 +71,7 @@ export const ForgeForm: React.FC<ForgeFormProps> = ({ formData, onChange, onSubm
         {/* Setting */}
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-            World Setting
+            {t.worldSetting}
           </label>
           <select
             value={formData.setting}
@@ -105,7 +79,7 @@ export const ForgeForm: React.FC<ForgeFormProps> = ({ formData, onChange, onSubm
             disabled={isLoading}
             className="w-full bg-[#181d2a] border border-slate-700/80 focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] rounded-lg px-3.5 py-2.5 text-sm text-slate-200 outline-none transition-all cursor-pointer"
           >
-            {SETTINGS.map((s) => (
+            {t.settingsList.map((s) => (
               <option key={s} value={s} className="bg-[#181d2a] text-slate-200">
                 {s}
               </option>
@@ -116,7 +90,7 @@ export const ForgeForm: React.FC<ForgeFormProps> = ({ formData, onChange, onSubm
         {/* Role */}
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-            Role & Archetype
+            {t.roleArchetype}
           </label>
           <select
             value={formData.role}
@@ -124,7 +98,7 @@ export const ForgeForm: React.FC<ForgeFormProps> = ({ formData, onChange, onSubm
             disabled={isLoading}
             className="w-full bg-[#181d2a] border border-slate-700/80 focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] rounded-lg px-3.5 py-2.5 text-sm text-slate-200 outline-none transition-all cursor-pointer"
           >
-            {ROLES.map((r) => (
+            {t.rolesList.map((r) => (
               <option key={r} value={r} className="bg-[#181d2a] text-slate-200">
                 {r}
               </option>
@@ -135,7 +109,7 @@ export const ForgeForm: React.FC<ForgeFormProps> = ({ formData, onChange, onSubm
         {/* Tone */}
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-            Narrative Tone
+            {t.narrativeTone}
           </label>
           <select
             value={formData.tone}
@@ -143,9 +117,9 @@ export const ForgeForm: React.FC<ForgeFormProps> = ({ formData, onChange, onSubm
             disabled={isLoading}
             className="w-full bg-[#181d2a] border border-slate-700/80 focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] rounded-lg px-3.5 py-2.5 text-sm text-slate-200 outline-none transition-all cursor-pointer"
           >
-            {TONES.map((t) => (
-              <option key={t} value={t} className="bg-[#181d2a] text-slate-200">
-                {t}
+            {t.tonesList.map((tItem) => (
+              <option key={tItem} value={tItem} className="bg-[#181d2a] text-slate-200">
+                {tItem}
               </option>
             ))}
           </select>
@@ -154,14 +128,14 @@ export const ForgeForm: React.FC<ForgeFormProps> = ({ formData, onChange, onSubm
         {/* Extra details */}
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-            Extra Detail or Quirk <span className="text-slate-500 font-normal">(optional)</span>
+            {t.extraDetailLabel} <span className="text-slate-500 font-normal">{t.extraDetailOptional}</span>
           </label>
           <textarea
             rows={2}
             value={formData.extraDetail}
             onChange={(e) => handleChange("extraDetail", e.target.value)}
             disabled={isLoading}
-            placeholder="e.g. Has an eyepatch, speaks only in riddles, carries an elven ring..."
+            placeholder={t.extraDetailPlaceholder}
             className="w-full bg-[#181d2a] border border-slate-700/80 focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] rounded-lg px-3.5 py-2 text-sm text-slate-200 placeholder-slate-500 outline-none transition-all resize-none"
           />
         </div>
@@ -177,7 +151,7 @@ export const ForgeForm: React.FC<ForgeFormProps> = ({ formData, onChange, onSubm
             <div className="absolute inset-0 bg-gradient-to-r from-[#b38728] via-[#fbf5b7] to-[#aa771c] transition-all duration-300 group-hover:scale-105" />
             <div className="relative bg-gradient-to-r from-[#2a2012] via-[#3a2c16] to-[#2a2012] px-6 py-3 rounded-[7px] flex items-center justify-center space-x-2 transition-colors">
               <span className="font-['Cinzel',serif] text-[#fceec7] font-bold tracking-widest text-base">
-                {isLoading ? "FORGING CHARACTER..." : "FORGE NPC"}
+                {isLoading ? t.forgingButton : t.forgeButton}
               </span>
               <Hammer className="w-5 h-5 text-[#ffd700]" />
             </div>
@@ -191,7 +165,7 @@ export const ForgeForm: React.FC<ForgeFormProps> = ({ formData, onChange, onSubm
             className="w-full py-2.5 rounded-lg border border-[#c5a059]/40 bg-[#161a25] hover:bg-[#1f2636] hover:border-[#c5a059]/70 text-[#f5dfa2] text-xs font-semibold tracking-wider uppercase transition-all flex items-center justify-center space-x-2"
           >
             <Dices className="w-4 h-4 text-[#ffd700]" />
-            <span>Roll Random Destiny</span>
+            <span>{t.randomButton}</span>
           </button>
         </div>
       </form>

@@ -1,48 +1,53 @@
 import React, { useState } from "react";
 import type { NPC } from "../types/npc";
+import type { Language } from "../lib/i18n";
+import { translations } from "../lib/i18n";
 import { Star, Copy, Check, ThumbsUp, ThumbsDown, Key, Scroll } from "lucide-react";
 
 interface CharacterSheetProps {
   npc: NPC;
+  language: Language;
   onToggleFavorite: (npc: NPC) => void;
   onFeedback: (npcId: string, type: "like" | "dislike") => void;
 }
 
 export const CharacterSheet: React.FC<CharacterSheetProps> = ({
   npc,
+  language,
   onToggleFavorite,
   onFeedback
 }) => {
   const [copied, setCopied] = useState(false);
+  const t = translations[language];
 
   const handleCopy = () => {
     const text = `
 ⚔️ ${npc.name} — ${npc.title}
-Race: ${npc.race} | Class: ${npc.characterClass} | Age: ${npc.age}
-Setting: ${npc.setting} | Tone: ${npc.tone}
+${t.race}: ${npc.race} | ${t.characterClass}: ${npc.characterClass} | ${t.age}: ${npc.age}
+${t.worldSetting}: ${npc.setting} | ${t.narrativeTone}: ${npc.tone}
 
-📜 APPEARANCE:
+📜 ${t.appearance.toUpperCase()}:
 ${npc.appearance}
 
-🧠 PERSONALITY:
-${npc.personalityTraits.map((t) => `• ${t}`).join("\n")}
+🧠 ${t.personality.toUpperCase()}:
+${npc.personalityTraits.map((trait) => `• ${trait}`).join("\n")}
 
-📖 BACKSTORY:
+📖 ${t.backstory.toUpperCase()}:
 ${npc.backstory}
 
-🗝️ SECRET:
+🗝️ ${t.secret.toUpperCase()}:
 ${npc.secret}
 
-💬 DIALOGUE:
+💬 ${t.dialogue.toUpperCase()}:
 ${npc.dialogueQuotes.map((q) => `"${q}"`).join("\n")}
 
-🎲 ATTRIBUTES:
+🎲 ${t.attributes.toUpperCase()}:
 STR: ${npc.attributes.strength} | DEX: ${npc.attributes.dexterity} | CON: ${npc.attributes.constitution}
 INT: ${npc.attributes.intelligence} | WIS: ${npc.attributes.wisdom} | CHA: ${npc.attributes.charisma}
 
-📜 QUEST: ${npc.quest.title} [${npc.quest.difficulty}]
+📜 ${t.associatedQuest}: ${npc.quest.title} [${npc.quest.difficulty}]
 ${npc.quest.description}
-Reward: ${npc.quest.reward}
+${t.bountyReward} ${npc.quest.reward}
 `.trim();
 
     navigator.clipboard.writeText(text);
@@ -95,17 +100,17 @@ Reward: ${npc.quest.reward}
           <button
             onClick={handleCopy}
             className="px-2.5 py-1.5 rounded-lg border border-slate-700/80 bg-[#181d2a] text-slate-300 hover:text-white hover:border-slate-500 transition-all text-xs flex items-center gap-1.5"
-            title="Copy Character Sheet"
+            title={t.copy}
           >
             {copied ? (
               <>
                 <Check className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-emerald-400 font-medium">Copied</span>
+                <span className="text-emerald-400 font-medium">{t.copied}</span>
               </>
             ) : (
               <>
                 <Copy className="w-3.5 h-3.5 text-slate-400" />
-                <span>Copy</span>
+                <span>{t.copy}</span>
               </>
             )}
           </button>
@@ -118,7 +123,7 @@ Reward: ${npc.quest.reward}
                 ? "bg-emerald-900/40 border-emerald-500 text-emerald-300 shadow-[0_0_8px_rgba(16,185,129,0.3)]"
                 : "bg-[#181d2a] border-slate-700/80 text-slate-400 hover:text-emerald-400 hover:border-emerald-600/50"
             }`}
-            title="Like this NPC"
+            title="Like"
           >
             <ThumbsUp className={`w-4 h-4 ${npc.feedback === "like" ? "fill-emerald-400/40" : ""}`} />
           </button>
@@ -131,7 +136,7 @@ Reward: ${npc.quest.reward}
                 ? "bg-rose-900/40 border-rose-500 text-rose-300 shadow-[0_0_8px_rgba(244,63,94,0.3)]"
                 : "bg-[#181d2a] border-slate-700/80 text-slate-400 hover:text-rose-400 hover:border-rose-600/50"
             }`}
-            title="Dislike this NPC"
+            title="Dislike"
           >
             <ThumbsDown className={`w-4 h-4 ${npc.feedback === "dislike" ? "fill-rose-400/40" : ""}`} />
           </button>
@@ -141,13 +146,13 @@ Reward: ${npc.quest.reward}
       {/* Metadata tags */}
       <div className="flex flex-wrap gap-2 text-xs mb-5">
         <span className="px-2.5 py-1 rounded bg-[#1b212f] border border-slate-700 text-slate-300 font-medium">
-          <strong className="text-slate-400">Race:</strong> {npc.race}
+          <strong className="text-slate-400">{t.race}:</strong> {npc.race}
         </span>
         <span className="px-2.5 py-1 rounded bg-[#1b212f] border border-slate-700 text-slate-300 font-medium">
-          <strong className="text-slate-400">Class:</strong> {npc.characterClass}
+          <strong className="text-slate-400">{t.characterClass}:</strong> {npc.characterClass}
         </span>
         <span className="px-2.5 py-1 rounded bg-[#1b212f] border border-slate-700 text-slate-300 font-medium">
-          <strong className="text-slate-400">Age:</strong> {npc.age}
+          <strong className="text-slate-400">{t.age}:</strong> {npc.age}
         </span>
         <span className="px-2.5 py-1 rounded bg-[#201d14] border border-[#c5a059]/40 text-[#f5dfa2] font-medium">
           {npc.setting}
@@ -159,7 +164,7 @@ Reward: ${npc.quest.reward}
         {/* Appearance */}
         <div>
           <h4 className="font-['Cinzel',serif] text-xs font-bold uppercase tracking-wider text-[#d4af37] mb-1">
-            Appearance
+            {t.appearance}
           </h4>
           <p className="text-slate-300 leading-relaxed font-sans">{npc.appearance}</p>
         </div>
@@ -167,7 +172,7 @@ Reward: ${npc.quest.reward}
         {/* Personality Traits */}
         <div>
           <h4 className="font-['Cinzel',serif] text-xs font-bold uppercase tracking-wider text-[#d4af37] mb-1.5">
-            Personality Traits
+            {t.personality}
           </h4>
           <div className="flex flex-wrap gap-1.5">
             {npc.personalityTraits.map((trait, i) => (
@@ -184,7 +189,7 @@ Reward: ${npc.quest.reward}
         {/* Backstory */}
         <div>
           <h4 className="font-['Cinzel',serif] text-xs font-bold uppercase tracking-wider text-[#d4af37] mb-1">
-            Backstory & Destiny
+            {t.backstory}
           </h4>
           <p className="text-slate-300 leading-relaxed font-sans">{npc.backstory}</p>
         </div>
@@ -195,7 +200,7 @@ Reward: ${npc.quest.reward}
             <Key className="w-5 h-5 text-[#ffd700] shrink-0 mt-0.5" />
             <div>
               <span className="font-['Cinzel',serif] font-bold text-xs uppercase tracking-wider text-[#f5dfa2] block mb-0.5">
-                Secret (Game Master Hook)
+                {t.secret}
               </span>
               <p className="text-xs text-amber-100/90 italic leading-relaxed">{npc.secret}</p>
             </div>
@@ -205,7 +210,7 @@ Reward: ${npc.quest.reward}
         {/* Dialogue Quotes */}
         <div>
           <h4 className="font-['Cinzel',serif] text-xs font-bold uppercase tracking-wider text-[#d4af37] mb-1.5">
-            Voice & Dialogue
+            {t.dialogue}
           </h4>
           <div className="space-y-1 pl-2 border-l-2 border-[#c5a059]/40 italic text-slate-300 text-xs sm:text-sm font-serif">
             {npc.dialogueQuotes.map((q, i) => (
@@ -217,7 +222,7 @@ Reward: ${npc.quest.reward}
         {/* Attributes Matrix */}
         <div className="pt-2">
           <h4 className="font-['Cinzel',serif] text-xs font-bold uppercase tracking-wider text-[#d4af37] mb-2">
-            Attributes
+            {t.attributes}
           </h4>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
             {Object.entries(npc.attributes).map(([attr, val]) => {
@@ -248,7 +253,7 @@ Reward: ${npc.quest.reward}
           <div className="bg-gradient-to-b from-[#221c13] to-[#171618] border-2 border-[#c5a059]/70 rounded-xl p-4 sm:p-5 relative shadow-[0_5px_20px_rgba(0,0,0,0.5)]">
             <div className="flex items-center justify-between mb-2">
               <span className="font-['Cinzel',serif] text-xs font-black uppercase tracking-widest text-[#d4af37] flex items-center gap-1.5">
-                <Scroll className="w-3.5 h-3.5" /> ASSOCIATED QUEST
+                <Scroll className="w-3.5 h-3.5" /> {t.associatedQuest}
               </span>
               <span
                 className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded border ${
@@ -263,7 +268,7 @@ Reward: ${npc.quest.reward}
             </h5>
             <p className="text-xs text-slate-300 mb-2 leading-relaxed">{npc.quest.description}</p>
             <div className="text-xs text-[#c5a059] pt-2 border-t border-[#3a3020] flex items-center justify-between">
-              <span className="font-semibold">Bounty & Reward:</span>
+              <span className="font-semibold">{t.bountyReward}</span>
               <span className="font-bold text-[#ffd700]">{npc.quest.reward}</span>
             </div>
           </div>
